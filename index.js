@@ -5,8 +5,11 @@ const cookieParser = require("cookie-parser")
 const { adminProtected, userProtected } = require("./middlewares/auth.middleware")
 require("dotenv").config()
 
+const path = require("path")
+
 const app = express()
 app.use(express.json())
+app.use(express.static("dist"))
 app.use(cookieParser())
 app.use(cors({ origin: "http://localhost:5173", credentials: true }))
 
@@ -15,7 +18,8 @@ app.use("/api/admin", adminProtected, require("./routes/admin.routes"))
 app.use("/api/user", userProtected, require("./routes/user.routes"))
 
 app.use((req, res, next) => {
-    res.status(404).json({ message: "Route not found" })
+    res.sendFile(path.join(__dirname, "dist", "index.html"))
+    // res.status(404).json({ message: "Route not found" })
 })
 app.use((err, req, res, next) => {
     console.error(err)
